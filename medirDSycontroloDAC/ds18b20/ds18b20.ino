@@ -1,10 +1,3 @@
-//  This Arduino sketch reads DS18B20 "1-Wire" digital
-//  temperature sensors.
-//  Copyright (c) 2010 Mark McComb, hacktronics LLC
-//  License: http://www.opensource.org/licenses/mit-license.php (Go crazy)
-//  Tutorial:
-//  http://www.hacktronics.com/Tutorials/arduino-1-wire-tutorial.html
-
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
@@ -21,7 +14,7 @@ DallasTemperature sensors(&oneWire);
 // See the tutorial on how to obtain these addresses:
 // http://www.hacktronics.com/Tutorials/arduino-1-wire-address-finder.html
 
-DeviceAddress insideThermometer = {0x28, 0xAF, 0x33, 0x84, 0x03, 0x00, 0x00, 0x9F};
+DeviceAddress tempSIPM = {0x28, 0xAF, 0x33, 0x84, 0x03, 0x00, 0x00, 0x9F};
  
 //DeviceAddress outsideThermometer = { 0x28, 0x6B, 0xDF, 0xDF, 0x02, 0x00, 0x00, 0xC0 };
 //DeviceAddress dogHouseThermometer = { 0x28, 0x59, 0xBE, 0xDF, 0x02, 0x00, 0x00, 0x9F };
@@ -31,18 +24,15 @@ int analogPin = A0;     // potentiometer wiper (middle terminal) connected to an
 int val = 0;           // variable to store the value read
 
 
-
-
 void setup(void)
 {
   // start serial port
   Serial.begin(9600);
   // Start up the library
   sensors.begin();
-  // set the resolution to 10 bit (good enough?)
-  sensors.setResolution(insideThermometer, 12);
-  //sensors.setResolution(outsideThermometer, 10);
-  //sensors.setResolution(dogHouseThermometer, 10);
+  // set the resolution to 12 bit 
+  sensors.setResolution(tempSIPM, 12);
+  
 }
 
 void printTemperature(DeviceAddress deviceAddress)
@@ -64,13 +54,14 @@ void loop(void)
   Serial.print("Getting temperatures...\n\r");
   sensors.requestTemperatures();
  
-  Serial.print("Inside temperature is: ");
-  printTemperature(insideThermometer);
+  Serial.print("La temperatura es: ");
+  printTemperature(tempSIPM);
   Serial.print("\n\r");
   val = analogRead(analogPin); 
-  float voltage= val * (5.0 / 1023.0); 
+  float voltage= val * (5.0 / 1023.0);     // ADC de 10 bits, maximo 5V
   Serial.println(val);
   Serial.print("\n\r");
+  
   Serial.println(voltage); 
   Serial.print("\n\r");
   
